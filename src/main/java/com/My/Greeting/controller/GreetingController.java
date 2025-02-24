@@ -1,6 +1,7 @@
 package com.My.Greeting.controller;
 
 import com.My.Greeting.service.GreetingService;
+import com.My.Greeting.service.GreetingServiceForName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +43,17 @@ public class GreetingController {
     }
 
     // UC3
+    @Autowired
+    private GreetingServiceForName greetingServiceForName;
+
+    //Constructor
+    public GreetingController(GreetingServiceForName greetingServiceForName ){
+        this.greetingServiceForName = greetingServiceForName;
+    }
     @GetMapping("/getGreetingsForName")
     public String getGreetingsForName(@RequestParam(required = false) String firstName,
                                       @RequestParam(required = false) String lastName){
-        return greetingService.getGreetingForName(firstName, lastName);
+        return greetingServiceForName.getGreeting(firstName, lastName);
     }
 
 

@@ -1,60 +1,58 @@
 package com.My.Greeting.controller;
 
 import com.My.Greeting.service.GreetingService;
-import com.My.Greeting.service.GreetingServiceForName;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.My.Greeting.entity.GreetingEntity;
+import com.My.Greeting.model.Greeting;
+import com.My.Greeting.service.GreetingService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 @RestController
-@RequestMapping("/greetings")
+@RequestMapping("/greeting")
 public class GreetingController {
+    private final GreetingService greetingService;
 
-    // UC1
-    @GetMapping("/getGreeting")
-    public Map<String, String> getGreeting(){
-        return Collections.singletonMap("message","Hello, World!");
+    public GreetingController(GreetingService greetingService) {
+        this.greetingService = greetingService;
     }
 
-    @PostMapping("/postGreeting")
-    public Map<String, String> postGreeting(){
-        return Collections.singletonMap("message", "Greeting created!");
+    //Extending controller to say hello world
+    @GetMapping("/hello")
+    public Greeting sayHello(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName){
+        String message = greetingService.getGreetingService(firstName,lastName);
+        return new Greeting(message);
+    }
+    @GetMapping
+    public Greeting getGreeting(){
+        return new Greeting("Hello : this is get mapping");
+    }
+    @PutMapping
+    public Greeting putGreeting(){
+        return new Greeting("Hello : this is put mapping");
     }
 
-    @PutMapping("/putGreeting")
-    public Map<String, String> putGreeting() {
-        return Collections.singletonMap("message", "Greeting updated!");
+    @DeleteMapping
+    public Greeting deleteGreeting(){
+        return new Greeting("Hello : this is delete mapping");
     }
 
-    @DeleteMapping("/deleteGreeting")
-    public Map<String, String> deleteGreeting() {
-        return Collections.singletonMap("message", "Greeting deleted!");
+    @PostMapping
+    public Greeting postGreeting(){
+        return new Greeting("Hello : this is post mapping");
     }
 
-    // UC2
-    @Autowired
-    private GreetingService greetingService;
-
-    @GetMapping("/getGreetings")
-    public Map<String, String> getGreetings(){
-        return Collections.singletonMap("message", greetingService.getGreetingMessage());
+    //Method to save the greeting in h2
+    @PutMapping("/save")
+    public GreetingEntity saveGreetings(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName){
+        return greetingService.saveGreetingRepository(firstName,lastName);
     }
 
-    // UC3
-    @Autowired
-    private GreetingServiceForName greetingServiceForName;
-
-    //Constructor
-    public GreetingController(GreetingServiceForName greetingServiceForName ){
-        this.greetingServiceForName = greetingServiceForName;
+    //Method to get all the greetings
+    @GetMapping("/all")
+    public List<GreetingEntity> getAllGreetings(){
+        return greetingService.getAllGreetings();
     }
-    @GetMapping("/getGreetingsForName")
-    public String getGreetingsForName(@RequestParam(required = false) String firstName,
-                                      @RequestParam(required = false) String lastName){
-        return greetingServiceForName.getGreeting(firstName, lastName);
-    }
-
 
 }
